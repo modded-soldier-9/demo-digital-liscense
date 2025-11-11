@@ -1,0 +1,5 @@
+{
+  "name": "SA Digital License & Fine Tracker",
+  "description": "A comprehensive mobile-first web application for South African drivers to manage their digital driver's license, track traffic fines, and access settings in any of the 11 official languages. Features include detailed profile and license views, advanced fine filtering and sorting, and smooth, animated page transitions.",
+  "requestFramePermissions": []
+}

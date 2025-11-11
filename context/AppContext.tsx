@@ -51,9 +51,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setThemeState(newTheme);
   }
 
-  const t = (key: string): string => {
-    return translations[language][key] || translations[Language.English][key] || key;
-  };
+  const t = useMemo(() => {
+    return (key: string): string => {
+      const langTranslations = translations[language];
+      if (langTranslations && key in langTranslations) {
+        return langTranslations[key];
+      }
+      // Fallback to English
+      const englishTranslations = translations[Language.English];
+      if (englishTranslations && key in englishTranslations) {
+        return englishTranslations[key];
+      }
+      // Last resort: return the key itself
+      return key;
+    };
+  }, [language]);
 
   const value = useMemo(() => ({
     language,
@@ -64,7 +76,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     fines: mockFines,
     theme,
     setTheme,
-  }), [language, theme]);
+  }), [language, theme, t]);
 
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

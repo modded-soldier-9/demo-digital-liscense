@@ -1,0 +1,30 @@
+﻿# demo-digital-liscense Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-11-11
+
+## Active Technologies
+
+- TypeScript 5.8.2, React 19.2.0, ES2022 + React, React DOM, Framer Motion (animations), Vite (build tool) (001-language-demo-improvements)
+
+## Project Structure
+
+```text
+backend/
+frontend/
+tests/
+```
+
+## Commands
+
+npm test; npm run lint
+
+## Code Style
+
+TypeScript 5.8.2, React 19.2.0, ES2022: Follow standard conventions
+
+## Recent Changes
+
+- 001-language-demo-improvements: Added TypeScript 5.8.2, React 19.2.0, ES2022 + React, React DOM, Framer Motion (animations), Vite (build tool)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

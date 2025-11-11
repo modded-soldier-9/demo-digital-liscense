@@ -67,4 +67,12 @@ export const mockFines: Fine[] = [
     status: FineStatus.Unpaid,
     location: 'N3 near Linksfield',
   },
+  {
+    id: 'F007',
+    date: '2024-07-05',
+    description: 'Traffic violation - Failure to yield',
+    amount: 600,
+    status: FineStatus.Disputed,
+    location: 'R21 Highway, Kempton Park',
+  },
 ];

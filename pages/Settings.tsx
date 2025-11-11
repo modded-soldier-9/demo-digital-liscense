@@ -5,7 +5,7 @@ import { ChevronDownIcon, SunIcon, MoonIcon, SettingsIcon } from '../components/
 import { motion } from 'framer-motion';
 
 const ThemeToggle: React.FC = () => {
-  const { theme, setTheme } = useTranslations();
+  const { theme, setTheme, t } = useTranslations();
   const isDark = theme === 'dark';
 
   const toggleTheme = () => {
@@ -21,8 +21,8 @@ const ThemeToggle: React.FC = () => {
            {isDark ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
          </div>
          <div>
-           <span className="text-base font-semibold text-slate-800 dark:text-slate-100 block">Dark Mode</span>
-           <span className="text-xs text-slate-500 dark:text-slate-400">Toggle theme appearance</span>
+           <span className="text-base font-semibold text-slate-800 dark:text-slate-100 block">{t('settings_appearance_dark_mode')}</span>
+           <span className="text-xs text-slate-500 dark:text-slate-400">{t('settings_appearance_dark_mode_desc')}</span>
          </div>
       </div>
       <motion.button
@@ -82,7 +82,7 @@ const Settings: React.FC = () => {
         >
           <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
             <div className="w-1 h-4 bg-gradient-to-b from-brand-blue-500 to-brand-blue-600 rounded-full" />
-            Appearance
+            {t('settings_appearance')}
           </h2>
           <ThemeToggle />
         </motion.div>
@@ -96,7 +96,7 @@ const Settings: React.FC = () => {
         >
           <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
             <div className="w-1 h-4 bg-gradient-to-b from-brand-blue-500 to-brand-blue-600 rounded-full" />
-            Language
+            {t('settings_language_section')}
           </h2>
           <label htmlFor="language-select" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">
             {t('settings_language')}
@@ -127,7 +127,7 @@ const Settings: React.FC = () => {
         >
           <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
             <div className="w-1 h-4 bg-gradient-to-b from-brand-blue-500 to-brand-blue-600 rounded-full" />
-            App Information
+            {t('settings_app_info_section')}
           </h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">

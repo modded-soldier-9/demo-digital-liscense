@@ -1,0 +1,1739 @@
+# Speckit Specify
+# SA Digital License & Fine Tracker - Demo Extension Guide
+
+## Purpose
+
+This document provides guidance for extending the demo application with additional showcase features and improvements. 
+
+**Important:** This is for DEMO/PROTOTYPE extensions only. Focus on visual impact, user experience demonstration, and technical showcasing rather than production-ready features.
+
+**Use this guide to:**
+- Add new demo pages or components
+- Extend visual features
+- Showcase additional UI/UX patterns
+- Demonstrate technical capabilities
+
+**Do NOT use this to:**
+- Build production features
+- Integrate real APIs or services
+- Add authentication/security systems
+- Process real data or payments
+
+---
+
+## Table of Contents
+
+1. [Demo Extension Templates](#demo-extension-templates)
+2. [New Demo Page Creation](#new-demo-page-creation)
+3. [New Component Spec](#new-component-spec)
+4. [Mock Data Patterns](#mock-data-patterns)
+5. [State Management Extension](#state-management-extension)
+6. [Animation Patterns](#animation-patterns)
+7. [Translation Addition Spec](#translation-addition-spec)
+8. [Theme Customization](#theme-customization)
+9. [Visual Enhancement Ideas](#visual-enhancement-ideas)
+10. [Demo Quality Guidelines](#demo-quality-guidelines)
+
+---
+
+## Demo Extension Templates
+
+### Template: Adding a New Demo Feature
+
+**Demo Extension Checklist:**
+- [ ] Define types in `types.ts` (keep simple)
+- [ ] Create mock data in `data/mockData.ts` (fictional, interesting)
+- [ ] Add translations (at minimum English + Afrikaans, others optional)
+- [ ] Create page component in `pages/` (if needed)
+- [ ] Create reusable components in `components/` (if needed)
+- [ ] Update `AppContext.tsx` if state is needed
+- [ ] Add navigation item to `BottomNav.tsx` (if new page)
+- [ ] Add page to `App.tsx` pages array (if new page)
+- [ ] Add eye-catching animations using Framer Motion
+- [ ] Implement dark mode styles
+- [ ] Test visual appearance on mobile viewport (375px-428px)
+- [ ] Verify basic navigation works
+- [ ] Focus on visual polish and impact
+
+**Demo Priorities:**
+1. Visual impact > Functionality
+2. Animation quality > Feature completeness
+3. Code clarity > Optimization
+4. Showcase value > Production readiness
+
+---
+
+## New Demo Page Creation
+
+### Specification: Creating a New Demo Page
+
+**Prerequisites:**
+- Decide on the demo scenario to showcase
+- Sketch basic layout (doesn't need to be detailed)
+- Prepare mock content (can be placeholder text)
+- Choose key visual elements
+
+**Step-by-Step Demo Implementation:**
+
+#### 1. Create Type Definitions
+
+**File:** `types.ts`
+
+```typescript
+// Add new interfaces/types
+export interface NewFeatureData {
+  id: string;
+  // ... other properties
+}
+
+// Add enums if needed
+export enum NewFeatureStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+}
+```
+
+#### 2. Create Mock Data
+
+**File:** `data/mockData.ts`
+
+```typescript
+import { NewFeatureData } from '../types';
+
+export const mockNewFeatureData: NewFeatureData[] = [
+  {
+    id: '1',
+    // ... mock data
+  },
+  // ... more mock data
+];
+```
+
+#### 3. Add Translations (Simplified for Demo)
+
+**File:** `data/translations.ts`
+
+For demos, prioritize English and optionally add Afrikaans:
+
+```typescript
+// In language objects - minimum English
+[Language.English]: {
+  newfeature_title: 'Feature Title',
+  newfeature_subtitle: 'Subtitle',
+  newfeature_action: 'Action Button',
+},
+[Language.Afrikaans]: {
+  newfeature_title: 'Kenmerk Titel',
+  newfeature_subtitle: 'Subtitel',
+  newfeature_action: 'Aksie Knoppie',
+},
+// Other languages can use English fallback or placeholder text
+```
+
+**Demo Approach:**
+- Full translations optional for demo
+- English is sufficient for technical showcase
+- Add other languages if demonstrating i18n specifically
+
+#### 4. Create Page Component
+
+**File:** `pages/NewFeature.tsx`
+
+```typescript
+import React, { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
+import { useTranslations } from '../hooks/useTranslations';
+import { motion } from 'framer-motion';
+
+const NewFeature: React.FC = () => {
+  const { /* context values */ } = useContext(AppContext)!;
+  const { t } = useTranslations();
+
+  return (
+    <div className="p-4 sm:p-6 bg-transparent min-h-full relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-indigo-50/20 dark:from-blue-950/20 dark:via-transparent dark:to-indigo-950/10 pointer-events-none" />
+      
+      <motion.header
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="mb-6 relative z-10"
+      >
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          {t('newfeature_title')}
+        </h1>
+      </motion.header>
+
+      {/* Content */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="relative z-10"
+      >
+        {/* Page content here */}
+      </motion.div>
+    </div>
+  );
+};
+
+export default NewFeature;
+```
+
+**Required Elements:**
+- Background pattern with gradient
+- Animated header with title
+- Relative z-10 for content layers
+- Dark mode styles
+- Responsive padding: `p-4 sm:p-6`
+- Framer Motion animations
+
+#### 5. Update AppContext (if needed)
+
+**File:** `context/AppContext.tsx`
+
+```typescript
+// Add to AppContextType interface
+interface AppContextType {
+  // ... existing props
+  newFeatureData: NewFeatureData[];
+}
+
+// Add to AppProvider component
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // ... existing code
+  
+  const value = useMemo(() => ({
+    // ... existing values
+    newFeatureData: mockNewFeatureData,
+  }), [/* dependencies */]);
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+};
+```
+
+#### 6. Add to Navigation
+
+**File:** `components/BottomNav.tsx`
+
+```typescript
+// Add new icon component
+export const NewFeatureIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg className={className} /* ... icon SVG */>
+    {/* SVG path */}
+  </svg>
+);
+
+// Add to nav items array
+const items = [
+  // ... existing items
+  { Icon: NewFeatureIcon, label: t('nav_newfeature'), index: 4 },
+];
+```
+
+#### 7. Register Page in App
+
+**File:** `App.tsx`
+
+```typescript
+import NewFeature from './pages/NewFeature';
+
+const pages = [
+  { component: Profile, key: 'profile' },
+  { component: License, key: 'license' },
+  { component: FineTracker, key: 'fines' },
+  { component: Settings, key: 'settings' },
+  { component: NewFeature, key: 'newfeature' }, // Add new page
+];
+```
+
+#### 8. Style Guidelines
+
+**Card Pattern:**
+```typescript
+<div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-5 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover-lift">
+  {/* Content */}
+</div>
+```
+
+**Button Pattern:**
+```typescript
+<motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-gradient-to-r from-brand-blue-600 to-brand-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg"
+>
+  {t('button_text')}
+</motion.button>
+```
+
+**Badge Pattern:**
+```typescript
+<span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md">
+  {t('badge_text')}
+</span>
+```
+
+---
+
+## New Component Spec
+
+### Specification: Creating Reusable Components
+
+**Component Types:**
+1. **UI Components** - Buttons, cards, badges, inputs
+2. **Layout Components** - Containers, grids, sections
+3. **Feature Components** - Complex, feature-specific elements
+4. **Icon Components** - SVG icons
+
+#### UI Component Template
+
+**File:** `components/Button.tsx`
+
+```typescript
+import React from 'react';
+import { motion, MotionProps } from 'framer-motion';
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  children,
+  onClick,
+  disabled = false,
+  className = '',
+}) => {
+  const baseClasses = 'font-semibold rounded-full shadow-lg transition-all';
+  
+  const variantClasses = {
+    primary: 'bg-gradient-to-r from-brand-blue-600 to-brand-blue-700 text-white hover:shadow-xl',
+    secondary: 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600',
+    danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-xl',
+  };
+  
+  const sizeClasses = {
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg',
+  };
+
+  return (
+    <motion.button
+      whileHover={{ scale: disabled ? 1 : 1.05 }}
+      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+export default Button;
+```
+
+#### Icon Component Template
+
+**File:** `components/icons.tsx`
+
+```typescript
+interface IconProps {
+  className?: string;
+  size?: number;
+}
+
+export const NewIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+  <svg
+    className={className}
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M..." // SVG path data
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+```
+
+**Icon Guidelines:**
+- Use `currentColor` for stroke/fill to inherit text color
+- Default size: 24px
+- Accept className for custom styling
+- Use strokeWidth="2" for consistency
+- Round line caps and joins
+
+---
+
+## Mock Data Patterns
+
+### Specification: Creating Engaging Mock Data for Demos
+
+**Demo Philosophy:** Mock data should be interesting, realistic, and showcase the UI effectively.
+
+#### Creating Compelling Mock Data
+
+**File:** `data/mockData.ts`
+
+```typescript
+// Demo-focused mock data tips:
+// 1. Use varied, interesting data
+// 2. Include edge cases (long names, different amounts)
+// 3. Make it feel authentic
+// 4. Add variety to showcase UI capabilities
+
+export const mockDemoFines: Fine[] = [
+  {
+    id: '1',
+    date: '2024-10-15',
+    description: 'Speeding - 20km/h over limit',
+    amount: 500,
+    status: FineStatus.Unpaid,
+    location: 'N1 Highway, Johannesburg',
+  },
+  {
+    id: '2',
+    date: '2024-09-22',
+    description: 'Illegal Parking',
+    amount: 250,
+    status: FineStatus.Paid,
+    location: 'Cape Town City Centre',
+  },
+  {
+    id: '3',
+    date: '2024-11-01',
+    description: 'Running Red Light',
+    amount: 1000,
+    status: FineStatus.Disputed,
+    location: 'Sandton Drive, Sandton',
+  },
+  // Add more varied examples
+];
+```
+
+**Mock Data Best Practices for Demos:**
+- Use realistic but fictional data
+- Include variety (different statuses, amounts, dates)
+- Make names/locations sound authentic
+- Add enough data to showcase scrolling/filtering
+- Include edge cases (very long descriptions, high amounts)
+
+#### Simulating Loading States (Optional)
+
+```typescript
+// utils/demoHelpers.ts
+export async function simulateDelay(ms: number = 1000): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Usage in components
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  simulateDelay(800).then(() => setLoading(false));
+}, []);
+```
+
+---
+
+## State Management Extension
+
+### Specification: Adding New State to Context
+
+#### When to Add State to Context
+
+**Add to Context if:**
+- Data is needed by multiple components
+- Data persists across page navigation
+- Data is user preferences/settings
+- Data is global application state
+
+**Don't Add to Context if:**
+- State is only used in one component
+- State is temporary/transient
+- State is form input (use local state)
+
+#### Implementation Steps
+
+**1. Update Interface:**
+
+```typescript
+interface AppContextType {
+  // ... existing properties
+  newState: NewStateType;
+  setNewState: (value: NewStateType) => void;
+}
+```
+
+**2. Add State Hook:**
+
+```typescript
+const [newState, setNewState] = useState<NewStateType>(() => {
+  const saved = localStorage.getItem('app-newstate');
+  return saved ? JSON.parse(saved) : defaultValue;
+});
+```
+
+**3. Add Persistence:**
+
+```typescript
+useEffect(() => {
+  localStorage.setItem('app-newstate', JSON.stringify(newState));
+}, [newState]);
+```
+
+**4. Add to Context Value:**
+
+```typescript
+const value = useMemo(() => ({
+  // ... existing values
+  newState,
+  setNewState,
+}), [newState, /* other dependencies */]);
+```
+
+**5. Type-Safe Usage:**
+
+```typescript
+const { newState, setNewState } = useContext(AppContext)!;
+```
+
+---
+
+## Animation Patterns
+
+### Specification: Standard Animation Patterns
+
+#### Page Transition Animation
+
+```typescript
+const pageVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? '100%' : '-100%',
+    opacity: 0,
+    scale: 0.95,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? '100%' : '-100%',
+    opacity: 0,
+    scale: 0.95,
+  }),
+};
+
+const pageTransition = {
+  x: { type: 'spring', stiffness: 300, damping: 30 },
+  opacity: { duration: 0.3 },
+  scale: { type: 'spring', stiffness: 300, damping: 30 },
+};
+```
+
+#### Fade In Animation
+
+```typescript
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5 }}
+>
+  {/* Content */}
+</motion.div>
+```
+
+#### Staggered List Animation
+
+```typescript
+<AnimatePresence>
+  {items.map((item, index) => (
+    <motion.div
+      key={item.id}
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+    >
+      {/* Item content */}
+    </motion.div>
+  ))}
+</AnimatePresence>
+```
+
+#### Hover & Tap Interactions
+
+```typescript
+<motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+>
+  {/* Button content */}
+</motion.button>
+```
+
+#### Scale In Animation
+
+```typescript
+<motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.3 }}
+>
+  {/* Content */}
+</motion.div>
+```
+
+#### Slide In from Side
+
+```typescript
+<motion.div
+  initial={{ x: -50, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+>
+  {/* Content */}
+</motion.div>
+```
+
+#### Layout Animation (for reordering)
+
+```typescript
+<motion.div layout transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+  {/* Content that changes position */}
+</motion.div>
+```
+
+#### Shimmer Effect (CSS)
+
+```css
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  animation: shimmer 3s infinite;
+}
+```
+
+---
+
+## Translation Addition Spec
+
+### Specification: Adding New Translation Keys
+
+#### Translation Key Naming Convention
+
+**Format:** `{section}_{element}_{detail}`
+
+**Examples:**
+- `profile_title` - Profile page title
+- `fines_status_paid` - Paid status text
+- `settings_theme_dark` - Dark theme label
+- `license_number` - License number label
+
+#### Adding a New Key
+
+**1. Identify Required Translations:**
+
+Make a list of all text that needs translation:
+- Page titles
+- Button labels
+- Form labels
+- Error messages
+- Status text
+- Helper text
+
+**2. Add to All Language Objects:**
+
+**File:** `data/translations.ts`
+
+```typescript
+export const translations: Record<Language, Record<string, string>> = {
+  [Language.English]: {
+    // ... existing keys
+    newfeature_title: 'New Feature',
+    newfeature_description: 'This is a description',
+    newfeature_button: 'Take Action',
+  },
+  [Language.Afrikaans]: {
+    // ... existing keys
+    newfeature_title: 'Nuwe Funksie',
+    newfeature_description: 'Hierdie is \'n beskrywing',
+    newfeature_button: 'Neem Aksie',
+  },
+  // ... repeat for all 11 languages
+};
+```
+
+**3. Verify Completeness:**
+
+```typescript
+// Optional: Add type checking helper
+type TranslationKeys = keyof typeof translations[Language.English];
+
+// This ensures all languages have the same keys
+const validateTranslations = () => {
+  const englishKeys = Object.keys(translations[Language.English]);
+  
+  Object.entries(translations).forEach(([lang, trans]) => {
+    const langKeys = Object.keys(trans);
+    const missing = englishKeys.filter(key => !langKeys.includes(key));
+    
+    if (missing.length > 0) {
+      console.warn(`Missing translations in ${lang}:`, missing);
+    }
+  });
+};
+```
+
+**4. Usage in Components:**
+
+```typescript
+const { t } = useTranslations();
+
+return (
+  <div>
+    <h1>{t('newfeature_title')}</h1>
+    <p>{t('newfeature_description')}</p>
+    <button>{t('newfeature_button')}</button>
+  </div>
+);
+```
+
+#### Translation Services
+
+For professional translations, consider:
+- South African Language Services
+- Native speakers for accuracy
+- Cultural context review
+- Consistent terminology across languages
+
+---
+
+## Theme Customization
+
+### Specification: Extending Theme System
+
+#### Current Theme System
+
+- Two themes: `light` and `dark`
+- Stored in localStorage
+- System preference detection
+- Applied via root class
+
+#### Adding a New Color Scheme
+
+**1. Update Type Definition:**
+
+```typescript
+type Theme = 'light' | 'dark' | 'high-contrast';
+```
+
+**2. Add Theme Detection:**
+
+```typescript
+const [theme, setThemeState] = useState<Theme>(() => {
+  const savedTheme = localStorage.getItem('app-theme');
+  if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'high-contrast') {
+    return savedTheme;
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+});
+```
+
+**3. Update CSS Classes:**
+
+**File:** `index.css`
+
+```css
+/* High Contrast Theme */
+.high-contrast {
+  --color-background: #000000;
+  --color-text: #FFFFFF;
+  --color-primary: #FFD700;
+  /* ... more custom properties */
+}
+```
+
+**4. Apply Theme Class:**
+
+```typescript
+useEffect(() => {
+  const root = window.document.documentElement;
+  root.classList.remove('light', 'dark', 'high-contrast');
+  root.classList.add(theme);
+  localStorage.setItem('app-theme', theme);
+}, [theme]);
+```
+
+#### Custom Brand Colors
+
+**1. Update Tailwind Config:**
+
+**File:** `index.css`
+
+```css
+@layer base {
+  :root {
+    --brand-primary: 37 99 235; /* RGB values for brand-blue-600 */
+    --brand-secondary: 99 102 241; /* RGB values for indigo-600 */
+  }
+}
+```
+
+**2. Use in Components:**
+
+```typescript
+<div className="bg-[rgb(var(--brand-primary))]">
+  {/* Content */}
+</div>
+```
+
+Or extend Tailwind theme:
+
+```javascript
+// tailwind.config.js (if you create one)
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'brand': {
+          'primary': 'rgb(var(--brand-primary))',
+          'secondary': 'rgb(var(--brand-secondary))',
+        },
+      },
+    },
+  },
+};
+```
+
+---
+
+## Data Model Extensions
+
+### Specification: Extending Data Models
+
+#### Adding New Fields to Existing Types
+
+**1. Update Type Definition:**
+
+```typescript
+export interface User {
+  name: string;
+  idNumber: string;
+  address: string;
+  phone: string;
+  email: string;
+  profilePhotoUrl: string;
+  // New fields
+  dateOfBirth?: string;
+  gender?: 'Male' | 'Female' | 'Other';
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+}
+```
+
+**2. Update Mock Data:**
+
+```typescript
+export const mockUser: User = {
+  // ... existing fields
+  dateOfBirth: '1985-06-15',
+  gender: 'Male',
+  emergencyContact: {
+    name: 'Jane Doe',
+    phone: '+27 82 123 4567',
+    relationship: 'Spouse',
+  },
+};
+```
+
+**3. Update Components:**
+
+```typescript
+// Profile.tsx
+<div>
+  <label>{t('profile_dob')}</label>
+  <p>{user.dateOfBirth ? formatDate(user.dateOfBirth) : 'N/A'}</p>
+</div>
+```
+
+**4. Backward Compatibility:**
+
+Use optional fields (`?`) for new properties to maintain compatibility with existing data.
+
+#### Creating Related Types
+
+```typescript
+export interface Vehicle {
+  registrationNumber: string;
+  make: string;
+  model: string;
+  year: number;
+  color: string;
+  vinNumber: string;
+}
+
+export interface User {
+  // ... existing fields
+  vehicles?: Vehicle[];
+}
+```
+
+---
+
+## Testing Specifications
+
+### Specification: Testing Strategy
+
+#### Unit Testing
+
+**Setup:**
+
+```bash
+npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+```
+
+**Test File Structure:**
+
+```typescript
+// components/__tests__/Button.test.tsx
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Button from '../Button';
+
+describe('Button Component', () => {
+  it('renders with children', () => {
+    render(<Button>Click Me</Button>);
+    expect(screen.getByText('Click Me')).toBeInTheDocument();
+  });
+
+  it('calls onClick when clicked', () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click Me</Button>);
+    
+    fireEvent.click(screen.getByText('Click Me'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies correct variant styles', () => {
+    const { container } = render(<Button variant="danger">Delete</Button>);
+    expect(container.firstChild).toHaveClass('from-red-500');
+  });
+
+  it('is disabled when disabled prop is true', () => {
+    render(<Button disabled>Disabled</Button>);
+    expect(screen.getByText('Disabled')).toBeDisabled();
+  });
+});
+```
+
+#### Integration Testing
+
+```typescript
+// pages/__tests__/FineTracker.test.tsx
+import { describe, it, expect } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
+import { AppProvider } from '../../context/AppContext';
+import FineTracker from '../FineTracker';
+
+describe('FineTracker Page', () => {
+  const renderWithContext = (component: React.ReactElement) => {
+    return render(
+      <AppProvider>
+        {component}
+      </AppProvider>
+    );
+  };
+
+  it('displays all fines', () => {
+    renderWithContext(<FineTracker />);
+    
+    // Assuming mock data has specific fines
+    expect(screen.getByText('Speeding')).toBeInTheDocument();
+    expect(screen.getByText('Parking Violation')).toBeInTheDocument();
+  });
+
+  it('filters fines by status', async () => {
+    const { user } = renderWithContext(<FineTracker />);
+    
+    const unpaidButton = screen.getByText('Unpaid');
+    await user.click(unpaidButton);
+    
+    // Should only show unpaid fines
+    expect(screen.queryByText('Speeding')).toBeInTheDocument();
+    expect(screen.queryByText('Paid Fine')).not.toBeInTheDocument();
+  });
+
+  it('calculates correct totals', () => {
+    renderWithContext(<FineTracker />);
+    
+    // Check if total amount is calculated correctly
+    expect(screen.getByText(/R 1[,]?500\.00/)).toBeInTheDocument();
+  });
+});
+```
+
+#### E2E Testing (Playwright Example)
+
+```typescript
+// e2e/navigation.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('App Navigation', () => {
+  test('navigates between pages', async ({ page }) => {
+    await page.goto('http://localhost:5173');
+    
+    // Check initial page
+    await expect(page.locator('h1')).toContainText('Profile');
+    
+    // Navigate to License
+    await page.click('text=License');
+    await expect(page.locator('h1')).toContainText('Driving Licence');
+    
+    // Navigate to Fines
+    await page.click('text=Fines');
+    await expect(page.locator('h1')).toContainText('Fine Tracker');
+    
+    // Navigate to Settings
+    await page.click('text=Settings');
+    await expect(page.locator('h1')).toContainText('Settings');
+  });
+
+  test('changes theme', async ({ page }) => {
+    await page.goto('http://localhost:5173');
+    
+    // Go to settings
+    await page.click('text=Settings');
+    
+    // Toggle theme
+    await page.click('[data-testid="theme-toggle"]');
+    
+    // Check dark mode applied
+    await expect(page.locator('html')).toHaveClass(/dark/);
+  });
+
+  test('changes language', async ({ page }) => {
+    await page.goto('http://localhost:5173');
+    
+    // Go to settings
+    await page.click('text=Settings');
+    
+    // Change language to Afrikaans
+    await page.selectOption('select[data-testid="language-selector"]', 'af');
+    
+    // Check if text changed
+    await expect(page.locator('h1')).toContainText('Instellings');
+  });
+});
+```
+
+#### Accessibility Testing
+
+```typescript
+// __tests__/accessibility.test.tsx
+import { describe, it } from 'vitest';
+import { render } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import App from '../App';
+
+expect.extend(toHaveNoViolations);
+
+describe('Accessibility', () => {
+  it('should not have any accessibility violations', async () => {
+    const { container } = render(<App />);
+    const results = await axe(container);
+    
+    expect(results).toHaveNoViolations();
+  });
+});
+```
+
+---
+
+## Specific Feature Specifications
+
+### Feature: Payment Integration
+
+**Objective:** Allow users to pay fines directly in the app
+
+**Requirements:**
+- Integration with payment gateway (PayFast, PayGate, etc.)
+- Secure payment processing
+- Payment confirmation
+- Receipt generation
+- Payment history
+
+**Implementation Steps:**
+
+1. **Add Payment Status to Fine Type:**
+
+```typescript
+export interface Fine {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  status: FineStatus;
+  location: string;
+  // New fields
+  paymentId?: string;
+  paymentDate?: string;
+  receiptUrl?: string;
+}
+```
+
+2. **Create Payment Service:**
+
+```typescript
+// services/payment.ts
+export class PaymentService {
+  async initializePayment(fineId: string, amount: number) {
+    // Initialize payment with gateway
+  }
+
+  async confirmPayment(paymentId: string) {
+    // Confirm payment status
+  }
+
+  async generateReceipt(paymentId: string) {
+    // Generate PDF receipt
+  }
+}
+```
+
+3. **Add Payment Component:**
+
+```typescript
+// components/PaymentModal.tsx
+const PaymentModal: React.FC<{ fine: Fine; onClose: () => void }> = ({ fine, onClose }) => {
+  // Payment form and processing
+};
+```
+
+4. **Update Fine Tracker:**
+
+```typescript
+// In FineTracker.tsx
+<motion.button
+  onClick={() => handlePayFine(fine)}
+  className="bg-green-600 text-white px-4 py-2 rounded-lg"
+>
+  {t('fines_pay_now')}
+</motion.button>
+```
+
+---
+
+### Feature: Push Notifications
+
+**Objective:** Notify users of new fines, expiring licenses, etc.
+
+**Requirements:**
+- PWA notification permission
+- Service worker for background notifications
+- Notification preferences
+- Local and server-side notifications
+
+**Implementation Steps:**
+
+1. **Service Worker Setup:**
+
+```javascript
+// public/sw.js
+self.addEventListener('push', (event) => {
+  const data = event.data.json();
+  
+  self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: '/icon.png',
+    badge: '/badge.png',
+    data: data.data,
+  });
+});
+```
+
+2. **Request Permission:**
+
+```typescript
+// utils/notifications.ts
+export async function requestNotificationPermission(): Promise<boolean> {
+  if (!('Notification' in window)) {
+    return false;
+  }
+
+  const permission = await Notification.requestPermission();
+  return permission === 'granted';
+}
+
+export async function subscribeUserToPush() {
+  const registration = await navigator.serviceWorker.ready;
+  
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(process.env.VITE_VAPID_PUBLIC_KEY),
+  });
+
+  // Send subscription to server
+  await api.saveSubscription(subscription);
+}
+```
+
+3. **Add to Settings:**
+
+```typescript
+// In Settings.tsx
+<div className="flex items-center justify-between">
+  <span>{t('settings_notifications')}</span>
+  <motion.button
+    onClick={handleToggleNotifications}
+    className={`w-14 h-8 rounded-full ${notificationsEnabled ? 'bg-green-500' : 'bg-slate-300'}`}
+  >
+    {/* Toggle switch */}
+  </motion.button>
+</div>
+```
+
+---
+
+### Feature: Vehicle Registration Tracking
+
+**Objective:** Track multiple vehicles and their registrations
+
+**Requirements:**
+- Add/remove vehicles
+- Track registration expiry
+- Renewal reminders
+- Vehicle details display
+
+**Implementation Steps:**
+
+1. **Create Vehicle Types:**
+
+```typescript
+export interface Vehicle {
+  id: string;
+  registrationNumber: string;
+  make: string;
+  model: string;
+  year: number;
+  color: string;
+  vinNumber: string;
+  registrationExpiry: string;
+  licenseDiscExpiry: string;
+  owner: string;
+}
+
+export interface User {
+  // ... existing fields
+  vehicles: Vehicle[];
+}
+```
+
+2. **Create Vehicles Page:**
+
+```typescript
+// pages/Vehicles.tsx
+const Vehicles: React.FC = () => {
+  const { user } = useContext(AppContext)!;
+  const { t } = useTranslations();
+
+  return (
+    <div className="p-4 sm:p-6">
+      <h1 className="text-3xl font-bold mb-6">{t('vehicles_title')}</h1>
+      
+      {user.vehicles.map((vehicle) => (
+        <VehicleCard key={vehicle.id} vehicle={vehicle} />
+      ))}
+      
+      <button onClick={handleAddVehicle}>
+        {t('vehicles_add_new')}
+      </button>
+    </div>
+  );
+};
+```
+
+3. **Add Navigation:**
+
+Update bottom nav to include vehicles icon and link.
+
+---
+
+### Feature: License Renewal
+
+**Objective:** Allow users to renew their driver's license
+
+**Requirements:**
+- Check renewal eligibility
+- Upload required documents
+- Pay renewal fee
+- Book appointment at testing center
+- Track renewal status
+
+**Implementation Steps:**
+
+1. **Add Renewal Data:**
+
+```typescript
+export interface LicenseRenewal {
+  id: string;
+  userId: string;
+  status: 'pending' | 'documents_uploaded' | 'payment_complete' | 'appointment_booked' | 'complete';
+  applicationDate: string;
+  appointmentDate?: string;
+  appointmentLocation?: string;
+  documents: {
+    idDocument: string; // URL
+    proofOfAddress: string; // URL
+    eyeTestCertificate: string; // URL
+  };
+  paymentId?: string;
+}
+```
+
+2. **Create Renewal Flow:**
+
+```typescript
+// pages/LicenseRenewal.tsx
+const LicenseRenewal: React.FC = () => {
+  const [step, setStep] = useState<'check' | 'documents' | 'payment' | 'appointment'>('check');
+
+  return (
+    <div className="p-4 sm:p-6">
+      <h1>{t('renewal_title')}</h1>
+      
+      {step === 'check' && <EligibilityCheck onNext={() => setStep('documents')} />}
+      {step === 'documents' && <DocumentUpload onNext={() => setStep('payment')} />}
+      {step === 'payment' && <PaymentStep onNext={() => setStep('appointment')} />}
+      {step === 'appointment' && <AppointmentBooking />}
+    </div>
+  );
+};
+```
+
+---
+
+### Feature: QR Code for Digital License
+
+**Objective:** Generate QR code for license verification
+
+**Requirements:**
+- Generate QR code from license data
+- Scannable by authorities
+- Encrypted data
+- Offline verification
+
+**Implementation Steps:**
+
+1. **Install QR Code Library:**
+
+```bash
+npm install qrcode react-qr-code
+```
+
+2. **Generate QR Data:**
+
+```typescript
+// utils/qrCode.ts
+import crypto from 'crypto';
+
+export function generateLicenseQRData(license: License, user: User): string {
+  const data = {
+    license: license.licenseNumber,
+    id: user.idNumber,
+    expiry: license.expiryDate,
+    class: license.licenseClass,
+  };
+
+  // Create signature
+  const dataString = JSON.stringify(data);
+  const signature = crypto
+    .createHmac('sha256', process.env.VITE_QR_SECRET)
+    .update(dataString)
+    .digest('hex');
+
+  return JSON.stringify({ ...data, signature });
+}
+```
+
+3. **Display QR Code:**
+
+```typescript
+// In License.tsx
+import { QRCodeSVG } from 'qrcode.react';
+
+const License: React.FC = () => {
+  const { license, user } = useContext(AppContext)!;
+  const qrData = generateLicenseQRData(license, user);
+
+  return (
+    <div>
+      {/* ... existing license display */}
+      
+      <div className="mt-6 flex justify-center">
+        <QRCodeSVG
+          value={qrData}
+          size={200}
+          bgColor="#ffffff"
+          fgColor="#000000"
+          level="H"
+        />
+      </div>
+    </div>
+  );
+};
+```
+
+---
+
+### Feature: Offline Support (PWA)
+
+**Objective:** Make app work offline
+
+**Requirements:**
+- Service worker for caching
+- Offline data storage
+- Sync when online
+- Offline indicator
+
+**Implementation Steps:**
+
+1. **Create Service Worker:**
+
+```javascript
+// public/sw.js
+const CACHE_NAME = 'sa-license-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/src/index.css',
+  '/src/index.tsx',
+  // Add all static assets
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => response || fetch(event.request))
+  );
+});
+```
+
+2. **Register Service Worker:**
+
+```typescript
+// src/index.tsx
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('SW registered:', registration);
+      })
+      .catch((error) => {
+        console.log('SW registration failed:', error);
+      });
+  });
+}
+```
+
+3. **Add Offline Indicator:**
+
+```typescript
+// hooks/useOnlineStatus.ts
+import { useState, useEffect } from 'react';
+
+export function useOnlineStatus(): boolean {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return isOnline;
+}
+```
+
+4. **Show Offline Banner:**
+
+```typescript
+// components/OfflineBanner.tsx
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const OfflineBanner: React.FC = () => {
+  const isOnline = useOnlineStatus();
+  const { t } = useTranslations();
+
+  return (
+    <AnimatePresence>
+      {!isOnline && (
+        <motion.div
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          exit={{ y: -100 }}
+          className="fixed top-0 left-0 right-0 bg-yellow-500 text-black px-4 py-2 text-center font-semibold z-50"
+        >
+          {t('offline_message')}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+```
+
+---
+
+## Migration & Upgrade Specifications
+
+### Migrating from Mock Data to Real APIs
+
+**Checklist:**
+- [ ] Set up API service layer
+- [ ] Create authentication system
+- [ ] Update context to use API calls
+- [ ] Add loading states to all pages
+- [ ] Add error handling
+- [ ] Implement data caching
+- [ ] Add refresh/refetch functionality
+- [ ] Test with real data
+- [ ] Handle edge cases (empty data, errors, slow connections)
+- [ ] Update documentation
+
+### Adding TypeScript Strict Mode
+
+If not already enabled:
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true
+  }
+}
+```
+
+---
+
+## Performance Optimization Specifications
+
+### Code Splitting
+
+```typescript
+// Lazy load pages
+import { lazy, Suspense } from 'react';
+
+const Profile = lazy(() => import('./pages/Profile'));
+const License = lazy(() => import('./pages/License'));
+const FineTracker = lazy(() => import('./pages/FineTracker'));
+const Settings = lazy(() => import('./pages/Settings'));
+
+// Wrap in Suspense
+<Suspense fallback={<LoadingScreen />}>
+  <PageComponent />
+</Suspense>
+```
+
+### Image Optimization
+
+```typescript
+// Use responsive images
+<img
+  src={user.profilePhotoUrl}
+  srcSet={`${user.profilePhotoUrl}?w=150 150w, ${user.profilePhotoUrl}?w=300 300w`}
+  sizes="(max-width: 768px) 100px, 150px"
+  alt={user.name}
+  loading="lazy"
+/>
+```
+
+### Memoization Strategy
+
+```typescript
+// Expensive calculations
+const totalAmount = useMemo(() => 
+  fines.reduce((sum, fine) => sum + fine.amount, 0),
+  [fines]
+);
+
+// Expensive components
+const MemoizedCard = React.memo(Card, (prevProps, nextProps) => {
+  return prevProps.id === nextProps.id && prevProps.status === nextProps.status;
+});
+```
+
+---
+
+## Security Specifications
+
+### Authentication Implementation
+
+```typescript
+// context/AuthContext.tsx
+interface AuthContextType {
+  user: User | null;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+  isAuthenticated: boolean;
+}
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+
+  const login = async (credentials: LoginCredentials) => {
+    const response = await api.login(credentials);
+    if (response.data) {
+      setUser(response.data.user);
+      localStorage.setItem('token', response.data.token);
+    }
+  };
+
+  const logout = async () => {
+    await api.logout();
+    setUser(null);
+    localStorage.removeItem('token');
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+### Protected Routes
+
+```typescript
+// components/ProtectedRoute.tsx
+const ProtectedRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useContext(AuthContext)!;
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+};
+```
+
+### Data Encryption
+
+```typescript
+// utils/encryption.ts
+import CryptoJS from 'crypto-js';
+
+const SECRET_KEY = process.env.VITE_ENCRYPTION_KEY;
+
+export function encrypt(data: string): string {
+  return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
+}
+
+export function decrypt(ciphertext: string): string {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+  return bytes.toString(CryptoJS.enc.Utf8);
+}
+```
+
+---
+
+## Deployment Specifications
+
+### Build Configuration
+
+```json
+// package.json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx",
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+### Environment Variables
+
+```bash
+# .env.production
+VITE_API_BASE_URL=https://api.production.com
+VITE_ENVIRONMENT=production
+VITE_ENABLE_ANALYTICS=true
+```
+
+### Vercel Deployment
+
+```json
+// vercel.json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+---
+
+## Conclusion
+
+This specification document should be updated as new features are added or existing features are modified. Always refer to both `speckit.constitution` for conventions and `speckit.specify` for implementation details.
+
+**Last Updated:** November 11, 2025
+**Specification Version:** 1.0.0
+
